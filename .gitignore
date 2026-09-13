@@ -1,0 +1,17 @@
+# Dependencies
+frontend/node_modules/
+backend/target/
+
+# Frontend build output
+frontend/dist/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# IDE and OS files
+.vscode/
+.idea/
+*.iml
+.DS_Store
