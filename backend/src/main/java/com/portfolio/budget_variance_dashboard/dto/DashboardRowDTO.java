@@ -7,6 +7,7 @@ public record DashboardRowDTO(
         String department,
         BigDecimal allocated,
         BigDecimal actual,
+        BigDecimal deviation,
         BigDecimal variance,
         BigDecimal utilization,
         String status

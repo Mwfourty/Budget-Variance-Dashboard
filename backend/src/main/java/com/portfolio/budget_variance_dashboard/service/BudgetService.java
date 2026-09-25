@@ -36,11 +36,9 @@ public class BudgetService {
         return logs.stream().map(log -> {
             BigDecimal allocated = log.getAllocatedAmount() != null ? log.getAllocatedAmount() : BigDecimal.ZERO;
             BigDecimal actual = log.getActualAmount() != null ? log.getActualAmount() : BigDecimal.ZERO;
+            BigDecimal deviation = allocated.subtract(actual);
+            BigDecimal variance = calculateVariancePercentage(allocated, actual);
 
-            // Variance = Allocated - Actual
-            BigDecimal variance = allocated.subtract(actual);
-
-            // Utilization = (Actual / Allocated) * 100
             BigDecimal utilization = BigDecimal.ZERO;
             if (allocated.compareTo(BigDecimal.ZERO) > 0) {
                 utilization = actual.divide(allocated, 4, RoundingMode.HALF_UP)
@@ -53,6 +51,7 @@ public class BudgetService {
                     log.getDepartment().getName(),
                     allocated,
                     actual,
+                    deviation,
                     variance,
                     utilization,
                     log.getStatus().name()
@@ -79,7 +78,8 @@ public class BudgetService {
         // 4. Return the updated data using our existing calculation logic
         BigDecimal allocated = updatedLog.getAllocatedAmount() != null ? updatedLog.getAllocatedAmount() : BigDecimal.ZERO;
         BigDecimal actual = updatedLog.getActualAmount() != null ? updatedLog.getActualAmount() : BigDecimal.ZERO;
-        BigDecimal variance = allocated.subtract(actual);
+        BigDecimal deviation = allocated.subtract(actual);
+        BigDecimal variance = calculateVariancePercentage(allocated, actual);
         
         BigDecimal utilization = BigDecimal.ZERO;
         if (allocated.compareTo(BigDecimal.ZERO) > 0) {
@@ -93,6 +93,7 @@ public class BudgetService {
                 updatedLog.getDepartment().getName(),
                 allocated,
                 actual,
+                deviation,
                 variance,
                 utilization,
                 updatedLog.getStatus().name()
@@ -112,6 +113,8 @@ public class BudgetService {
         ));
         BigDecimal allocated = chartData.get(0).allocated();
         BigDecimal actual = chartData.get(0).actual();
+        BigDecimal deviation = allocated.subtract(actual);
+        BigDecimal variance = calculateVariancePercentage(allocated, actual);
         BigDecimal utilization = allocated.compareTo(BigDecimal.ZERO) > 0
             ? actual.divide(allocated, 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100")).setScale(1, RoundingMode.HALF_UP)
             : BigDecimal.ZERO;
@@ -122,7 +125,7 @@ public class BudgetService {
 
         return new DashboardResponse(
             chartData,
-            new DashboardResponse.SummaryDTO(allocated.subtract(actual), utilization),
+            new DashboardResponse.SummaryDTO(variance, utilization, deviation),
             logs.stream().map(this::toDashboardRow).toList(),
             departments
         );
@@ -161,10 +164,22 @@ public class BudgetService {
         private DashboardRowDTO toDashboardRow(BudgetLog log) {
         BigDecimal allocated = log.getAllocatedAmount() == null ? BigDecimal.ZERO : log.getAllocatedAmount();
         BigDecimal actual = log.getActualAmount() == null ? BigDecimal.ZERO : log.getActualAmount();
+        BigDecimal deviation = allocated.subtract(actual);
+        BigDecimal variance = calculateVariancePercentage(allocated, actual);
         BigDecimal utilization = allocated.compareTo(BigDecimal.ZERO) > 0
             ? actual.divide(allocated, 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100")).setScale(1, RoundingMode.HALF_UP)
             : BigDecimal.ZERO;
         return new DashboardRowDTO(log.getId(), log.getDepartment().getName(), allocated, actual,
-            allocated.subtract(actual), utilization, log.getStatus().name().toLowerCase());
+            deviation, variance, utilization, log.getStatus().name().toLowerCase());
+        }
+
+        private BigDecimal calculateVariancePercentage(BigDecimal allocated, BigDecimal actual) {
+        if (allocated.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return allocated.subtract(actual)
+            .divide(allocated, 4, RoundingMode.HALF_UP)
+            .multiply(new BigDecimal("100"))
+            .setScale(1, RoundingMode.HALF_UP);
         }
 }

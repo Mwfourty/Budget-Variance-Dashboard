@@ -33,7 +33,8 @@ export default function AddEntryModal({ open, entry, error, onClose, onSubmit })
       department: form.department || 'Untitled Budget',
       allocated,
       actual,
-      variance: allocated - actual,
+      variance: allocated ? Number((((allocated - actual) / allocated) * 100).toFixed(1)) : 0,
+      deviation: allocated - actual,
       utilization: allocated ? Number(((actual / allocated) * 100).toFixed(1)) : 0
     });
   };

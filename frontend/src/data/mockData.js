@@ -14,8 +14,9 @@ export const mockChartData = [
 ];
 
 export const mockSummary = {
-  totalVariance: 120000,
-  budgetUtilization: 66.3
+  totalVariance: -0.1,
+  budgetUtilization: 100.1,
+  totalDeviation: -500
 };
 
 export const mockTableRows = [
@@ -24,7 +25,8 @@ export const mockTableRows = [
     department: 'IT Budget',
     allocated: 520000,
     actual: 495000,
-    variance: 25000,
+    deviation: 25000,
+    variance: 4.8,
     utilization: 95.2,
     status: 'draft'
   },
@@ -33,7 +35,8 @@ export const mockTableRows = [
     department: 'HR Budget',
     allocated: 180000,
     actual: 176500,
-    variance: 3500,
+    deviation: 3500,
+    variance: 1.9,
     utilization: 98.1,
     status: 'pending'
   },
@@ -42,7 +45,8 @@ export const mockTableRows = [
     department: 'Marketing Budget',
     allocated: 260000,
     actual: 289000,
-    variance: -29000,
+    deviation: -29000,
+    variance: -11.2,
     utilization: 111.2,
     status: 'approved'
   }

@@ -9,12 +9,12 @@ export default function AppBackdrop() {
 
   return (
     <div
-      className="fixed inset-0 -z-10 opacity-[0.35] dark:opacity-[0.25]"
+      className="fixed inset-0 -z-10 opacity-[0.85] dark:opacity-[0.25]"
       aria-hidden="true"
     >
       <LiquidEther
         colors={isDark ? ['#F2600E', '#7E2C05', '#1F1F1E'] : ['#F2600E', '#FF9F5F', '#FFE4D2']}
-        backgroundColor={isDark ? '#000000' : '#FAFAF9'}
+        backgroundColor={isDark ? '#000000' : '#EEEEEB'}
         lightMode={false}
         autoDemo
         autoSpeed={0.3}

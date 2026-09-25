@@ -7,6 +7,7 @@ public record BudgetSummaryDTO(
     String departmentName,
     BigDecimal allocatedAmount,
     BigDecimal actualAmount,
+    BigDecimal deviation,
     BigDecimal variance,
     BigDecimal utilizationPercentage,
     String status

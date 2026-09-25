@@ -11,7 +11,7 @@ public record DashboardResponse(
 ) {
     public record ChartPointDTO(String period, BigDecimal allocated, BigDecimal actual) {}
 
-    public record SummaryDTO(BigDecimal totalVariance, BigDecimal budgetUtilization) {}
+    public record SummaryDTO(BigDecimal totalVariance, BigDecimal budgetUtilization, BigDecimal totalDeviation) {}
 
     public record DepartmentStatusDTO(Long id, String name, String status) {}
 }

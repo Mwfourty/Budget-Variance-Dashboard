@@ -5,6 +5,14 @@ function formatCurrency(value) {
   return `R${Math.abs(value).toLocaleString('en-ZA')}`;
 }
 
+function formatSignedCurrency(value) {
+  return `${value >= 0 ? '+' : '−'}R${Math.abs(value).toLocaleString('en-ZA')}`;
+}
+
+function formatPercentage(value) {
+  return `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(1)}%`;
+}
+
 export default function FinancialTable({ rows, onDelete, onEdit, onSubmit, onAdd }) {
   const [openActions, setOpenActions] = useState(null);
 
@@ -64,9 +72,13 @@ export default function FinancialTable({ rows, onDelete, onEdit, onSubmit, onAdd
                     <dd className="tabular mt-1 text-graphite-700 dark:text-graphite-200">{formatCurrency(row.actual)}</dd>
                   </div>
                   <div>
+                    <dt className="text-[10px] uppercase tracking-wide text-graphite-500 dark:text-graphite-300">Deviation</dt>
+                    <dd className="tabular mt-1 text-graphite-700 dark:text-graphite-200">{formatSignedCurrency(row.deviation ?? 0)}</dd>
+                  </div>
+                  <div>
                     <dt className="text-[10px] uppercase tracking-wide text-graphite-500 dark:text-graphite-300">Variance</dt>
                     <dd className={`tabular mt-1 font-medium ${isOverBudget ? 'text-negative' : 'text-positive'}`}>
-                      {isOverBudget ? '−' : '+'}{formatCurrency(row.variance)}
+                      {formatPercentage(row.variance)}
                     </dd>
                   </div>
                   <div>
@@ -103,6 +115,7 @@ export default function FinancialTable({ rows, onDelete, onEdit, onSubmit, onAdd
             <th className="pb-3 pr-4 font-medium">Department</th>
             <th className="pb-3 pr-4 font-medium">Allocated</th>
             <th className="pb-3 pr-4 font-medium">Actual</th>
+            <th className="pb-3 pr-4 font-medium">Deviation</th>
             <th className="pb-3 pr-4 font-medium">Variance</th>
             <th className="pb-3 pr-4 font-medium">Utilization</th>
             <th className="pb-3 pl-4 font-medium" aria-hidden="true" />
@@ -122,13 +135,15 @@ export default function FinancialTable({ rows, onDelete, onEdit, onSubmit, onAdd
                 <td className="tabular py-4 pr-4 text-graphite-600 dark:text-graphite-300">
                   {formatCurrency(row.actual)}
                 </td>
+                <td className="tabular py-4 pr-4 text-graphite-600 dark:text-graphite-300">
+                  {formatSignedCurrency(row.deviation ?? 0)}
+                </td>
                 <td
                   className={`tabular py-4 pr-4 font-medium ${
                     isOverBudget ? 'text-negative' : 'text-positive'
                   }`}
                 >
-                  {isOverBudget ? '−' : '+'}
-                  {formatCurrency(row.variance)}
+                  {formatPercentage(row.variance)}
                 </td>
                 <td className="tabular py-4 pr-4 text-graphite-600 dark:text-graphite-300">
                   {row.utilization.toFixed(1)}%
@@ -173,7 +188,7 @@ export default function FinancialTable({ rows, onDelete, onEdit, onSubmit, onAdd
           })}
           {rows.length === 0 && (
             <tr>
-              <td colSpan={6} className="py-8 text-center text-sm text-graphite-400">
+              <td colSpan={7} className="py-8 text-center text-sm text-graphite-400">
                 No budget entries yet. Use the + button to add one.
               </td>
             </tr>
